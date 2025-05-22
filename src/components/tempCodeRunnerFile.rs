@@ -176,17 +176,12 @@ impl Component for Chat {
         let button_class = if self.dark_mode {
             "p-3 shadow-sm w-10 h-10 rounded-full flex justify-center items-center bg-grey-700 hover:bg-grey-800"
         } else {
-            "p-3 shadow-sm w-10 h-10 rounded-full flex justify-center items-center bg-grey-300 hover:bg-grey-400"
-        };
-
-        let icon_color_class = if self.dark_mode {
-            "text-white"
-        } else {
-            "text-black"
+            "p-3 shadow-sm w-10 h-10 rounded-full flex justify-center items-center bg-grey-500 hover:bg-grey-600"
         };
 
         html! {
             <div class={main_container_class}>
+                // Sidebar
                 <div class={sidebar_class}>
                     <div class="text-xl p-3 flex justify-between items-center">
                         {"Users"}
@@ -196,7 +191,7 @@ impl Component for Chat {
                     </div>
                     {
                         self.users.iter().map(|u| {
-                            html! {
+                            html!{
                                 <div class={user_card_class}>
                                     <div>
                                         <img class="w-12 h-12 rounded-full" src={u.avatar.clone()} alt="avatar"/>
@@ -215,12 +210,13 @@ impl Component for Chat {
                     }
                 </div>
 
+                // Chat Area
                 <div class="grow h-screen flex flex-col">
                     <div class="w-full h-14 border-b-2 border-gray-300">
                         <div class="text-xl p-3">{"💬 Chat!"}</div>
                     </div>
 
-                    <div class="w-full grow overflow-auto border-b-2 border-gray-300 px-2 py-2">
+                    <div class="w-full grow overflow-auto border-b-2 border-gray-300">
                         {
                             self.messages.iter().map(|m| {
                                 let is_me = m.from == self.username;
@@ -230,26 +226,24 @@ impl Component for Chat {
                                 let alignment_class = if is_me { "justify-end" } else { "justify-start" };
                                 let bubble_color_class = if is_me {
                                     if self.dark_mode {
-                                        "bg-gray-600 text-white"
+                                        "bg-grey-600 text-white"
                                     } else {
-                                        "bg-gray-300 text-black"
+                                        "bg-grey-100 text-black"
                                     }
+                                } else if self.dark_mode {
+                                    "bg-grey-800 text-white"
                                 } else {
-                                    if self.dark_mode {
-                                        "bg-gray-700 text-white"
-                                    } else {
-                                        "bg-gray-200 text-black"
-                                    }
+                                    "bg-grey-100 text-black"
                                 };
 
                                 let bubble_class = format!(
-                                    "flex {} w-full px-4 my-2",
+                                    "flex {} w-full px-4",
                                     alignment_class
                                 );
 
                                 html! {
                                     <div class={bubble_class}>
-                                        <div class={format!("{} max-w-md rounded-2xl p-3 flex items-end gap-2 shadow-sm", bubble_color_class)}>
+                                        <div class={format!("{} max-w-md rounded-lg p-3 flex items-end gap-2", bubble_color_class)}>
                                             { if !is_me {
                                                 html! { <img class="w-6 h-6 rounded-full" src={avatar} alt="avatar" /> }
                                             } else {
@@ -272,14 +266,19 @@ impl Component for Chat {
                         }
                     </div>
 
+                    // Input area
                     <div class="w-full h-14 flex px-3 items-center">
                         <input ref={self.chat_input.clone()} type="text" placeholder="Message" class={input_bg_class} name="message" required=true />
                         <button onclick={submit} class={button_class}>
-                            <span class={icon_color_class}>{"➤"}</span>
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-white">
+                                <path d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                            </svg>
                         </button>
                     </div>
                 </div>
             </div>
         }
     }
+
 }
